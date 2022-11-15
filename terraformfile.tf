@@ -1,3 +1,10 @@
+### Vpc
+module "vpc" {
+  source    = "./providers/aws/network/vpc"
+  vpc_name  = "balsamo"
+  cidr      = "192.168.0.0/22"
+}
+
 ## Key pairs
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
