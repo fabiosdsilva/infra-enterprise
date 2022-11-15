@@ -21,7 +21,7 @@ module "internet_gateway" {
 
 ## Nat gateway
 module "nat_gateway" {
-  source          = "./terraform-aws-modules/nat_gateway"
+  source          = "./providers/aws/network/nat_gateway"
   eip_nat_gateway = {
     name      = "nat-gateway"
     eip_id    = module.eip.elastic_ip[0]
@@ -34,6 +34,25 @@ module "nat_gateway" {
     module.vpc,
     module.eip
   ]
+}
+
+## Subnet
+module "subnet" {
+  source        = "./terraform-aws-modules/subnet"
+  public_subnet = {
+    name      = "subnet-public-1a"
+    vpc_id    = module.vpc.id_vpc
+    cidr      = "192.168.1.0/24"
+    azs       = ["${terraform.workspace == "production" ? "us-east-1a" : "us-west-2a"}"]
+  }
+  private_subnet = {
+    name      = "subnet-private-1b"
+    vpc_id    = module.vpc.id_vpc
+    cidr      = "192.168.2.0/24"
+    azs       = ["${terraform.workspace == "production" ? "us-east-1b" : "us-west-2b"}"]
+  }
+  
+  depends_on = [module.vpc, module.internet_gateway]
 }
 
 ## Route table
