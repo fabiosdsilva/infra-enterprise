@@ -6,11 +6,28 @@ module "vpc" {
 }
 
 ## Internet gateway
-module "network_gateway" {
+module "internet_gateway" {
   source                = "./providers/aws/network/internet_gateway"
-  network_gateway_name  = "internet-gateway-publica"
+  internet_gateway_name  = "internet-gateway-publica"
   vpc_id                = module.vpc.id_vpc
   depends_on            = [module.vpc]
+}
+
+## Nat gateway
+module "nat_gateway" {
+  source          = "./terraform-aws-modules/nat_gateway"
+  eip_nat_gateway = {
+    name      = "nat-gateway"
+    eip_id    = module.eip.id_eip_nat
+    subnet_id = module.subnet.public_subnet
+  }
+
+  depends_on = [
+    module.internet_gateway,
+    module.subnet,
+    module.vpc,
+    module.eip
+  ]
 }
 
 ## Route table
@@ -25,10 +42,10 @@ module "route_table" {
   nat_gateway_id        = module.nat_gateway.id_nat_gateway
   depends_on            = [
     module.vpc,
-    odule.network_gateway,
+    module.internet_gateway,
     module.subnet,
     module.nat_gateway
-]
+  ]
 }
 
 ## Key pairs
