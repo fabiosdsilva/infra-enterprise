@@ -13,6 +13,24 @@ module "network_gateway" {
   depends_on            = [module.vpc]
 }
 
+## Route table
+module "route_table" {
+  source                = "./providers/aws/network/route_table"
+  vpc_id                = module.vpc.id_vpc
+  cidr_block_rt_public  = "0.0.0.0/0"
+  cidr_block_rt_private = "0.0.0.0/0"
+  rt_public_name        = "public_rt"
+  rt_private_name       = "private_rt"
+  gateway_id            = module.internet_gateway.id_gateway
+  nat_gateway_id        = module.nat_gateway.id_nat_gateway
+  depends_on            = [
+    module.vpc,
+    odule.network_gateway,
+    module.subnet,
+    module.nat_gateway
+]
+}
+
 ## Key pairs
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
