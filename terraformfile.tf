@@ -5,6 +5,14 @@ module "vpc" {
   cidr      = "192.168.0.0/22"
 }
 
+## Internet gateway
+module "network_gateway" {
+  source                = "./providers/aws/network/internet_gateway"
+  network_gateway_name  = "internet-gateway-publica"
+  vpc_id                = module.vpc.id_vpc
+  depends_on            = [module.vpc]
+}
+
 ## Key pairs
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
