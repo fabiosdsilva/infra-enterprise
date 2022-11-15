@@ -1,8 +1,14 @@
-### Vpc
+## Vpc
 module "vpc" {
   source    = "./providers/aws/network/vpc"
   vpc_name  = "balsamo"
   cidr      = "192.168.0.0/22"
+}
+
+## Elastic ip
+module "eip" {
+  source = "/providers/aws/network/elastic_ip"
+  amount = 1
 }
 
 ## Internet gateway
@@ -18,7 +24,7 @@ module "nat_gateway" {
   source          = "./terraform-aws-modules/nat_gateway"
   eip_nat_gateway = {
     name      = "nat-gateway"
-    eip_id    = module.eip.id_eip_nat
+    eip_id    = module.eip.elastic_ip[0]
     subnet_id = module.subnet.public_subnet
   }
 
