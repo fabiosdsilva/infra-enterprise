@@ -1,11 +1,11 @@
 resource "aws_security_group" "main" {
-    count = length(var.sg_settings)
+    count = length(var.security_group)
 
-    name = var.sg_settings[count.index].security_group_name
+    name = var.security_group[count.index].security_group_name
     vpc_id = var.vpc_id
 
     dynamic "ingress" {
-        for_each = var.sg_settings[count.index].ingress
+        for_each = var.security_group[count.index].ingress
         content {
             description = ingress.value.description
             from_port = ingress.value.from_port
@@ -23,6 +23,6 @@ resource "aws_security_group" "main" {
     }
 
     tags = {
-      Name = var.sg_settings[count.index].security_group_name
+      Name = var.security_group[count.index].security_group_name
     }
 }
