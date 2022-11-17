@@ -73,6 +73,28 @@ module "route_table" {
   ]
 }
 
+## Route table association
+module "rt_association" {
+  source            = "./terraform-aws-modules/route_table_association"
+  association_rt_public = {
+    gateway_id      = module.network_gateway.id_gateway
+    subnet_id       = module.subnet.public_subnet
+    route_table_id  = module.route_table.id_rt_public
+  }
+  association_rt_private = {
+    subnet_id       = module.subnet.private_subnet
+    route_table_id  = module.route_table.id_rt_private
+  }
+
+  depends_on = [
+    module.vpc,
+    module.internet_gateway,
+    module.subnet,
+    module.route_table
+  ]
+}
+
+
 ## Key pairs
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
