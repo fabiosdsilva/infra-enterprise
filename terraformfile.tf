@@ -94,6 +94,25 @@ module "rt_association" {
   ]
 }
 
+## Security group
+module "security_group" {
+  source = "/providers/aws/network/security_group"
+  security_group = [
+    {
+      security_group_name = "servers"
+      ingress             = [
+        {
+          description = "SSH"
+          from_port   = 22
+          to_port     = 22
+          protocol    = "tcp"
+          cidr_blocks = ["45.168.89.213/0"]
+        }
+      ]
+    }
+  ]
+}
+
 
 ## Key pairs
 module "key_pairs" {
