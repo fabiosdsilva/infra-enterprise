@@ -1,7 +1,9 @@
-resource "aws_internet_gateway" "gateway" {
-  vpc_id = var.vpc_id
+
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = var.eip_nat_gateway.eip_id
+  subnet_id     = var.eip_nat_gateway.subnet_id
 
   tags = {
-    Name = var.internet_gateway_name
+    Name = var.eip_nat_gateway.name
   }
 }

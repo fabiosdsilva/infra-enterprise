@@ -7,7 +7,7 @@ module "vpc" {
 
 ## Elastic ip
 module "eip" {
-  source = "/providers/aws/network/elastic_ip"
+  source = "./providers/aws/network/elastic_ip"
   amount = 1
 }
 
@@ -38,7 +38,7 @@ module "nat_gateway" {
 
 ## Subnet
 module "subnet" {
-  source        = "./terraform-aws-modules/subnet"
+  source        = "./providers/aws/network/subnet"
   public_subnet = {
     name      = "subnet-public-1a"
     vpc_id    = module.vpc.id_vpc
@@ -75,9 +75,9 @@ module "route_table" {
 
 ## Route table association
 module "rt_association" {
-  source            = "./terraform-aws-modules/route_table_association"
+  source            = "./providers/aws/network/route_table_association"
   association_rt_public = {
-    gateway_id      = module.network_gateway.id_gateway
+    gateway_id      = module.internet_gateway.id_gateway
     subnet_id       = module.subnet.public_subnet
     route_table_id  = module.route_table.id_rt_public
   }
@@ -96,7 +96,7 @@ module "rt_association" {
 
 ## Security group
 module "security_group" {
-  source = "/providers/aws/network/security_group"
+  source = "./providers/aws/network/security_group"
   security_group = [
     {
       security_group_name = "servers"
@@ -106,18 +106,18 @@ module "security_group" {
           from_port   = 22
           to_port     = 22
           protocol    = "tcp"
-          cidr_blocks = ["45.168.89.213/0"]
+          cidr_blocks = ["0.0.0.0/0"]
         }
       ]
     }
   ]
+  vpc_id = module.vpc.id_vpc
 }
 
 
 ## Key pairs
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
-
   key_name = [
     "key-balsamo-server"
   ]
@@ -125,20 +125,26 @@ module "key_pairs" {
 
 ## Ec2
 module "ec2" {
-  source = "./providers/aws/ec2"
-
-#   ec2-web-servers = [
-#     {
-#       name          = ""
-#       instance_type = ""
-#       key_name      = ""
-#       volume_size   = 8
-#       volume_type   = ""
-#     }
-#   ]
+  source = "./providers/aws/servers"
+  ec2-web-servers = [
+    {
+      name          = "balsamo-server"
+      instance_type = "t2.micro"
+      key_name      = "key-balsamo-server"
+      volume_size   = 8
+      volume_type   = "gp2"
+    }
+  ]
 
   depends_on = [
-    module.key_pairs
+    module.vpc,
+    module.nat_gateway,
+    module.internet_gateway,
+    module.subnet,
+    module.route_table,
+    module.security_group,
+    module.eip,
+    module.key_pairs,
   ]
 }
 

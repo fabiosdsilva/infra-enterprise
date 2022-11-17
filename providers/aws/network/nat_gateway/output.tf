@@ -1,7 +1,3 @@
-output "id_gateway" {
-  value = aws_internet_gateway.gateway.id
-}
-
-output "gateway_name" {
-  value = aws_internet_gateway.gateway.tags_all
+output "id_nat_gateway" {
+  value = aws_nat_gateway.nat_gateway.id
 }
