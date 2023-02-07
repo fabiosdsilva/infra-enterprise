@@ -1,7 +1,7 @@
 ## Vpc
 module "vpc" {
   source    = "./providers/aws/network/vpc"
-  vpc_name  = "balsamo"
+  vpc_name  = "terra"
   cidr      = "192.168.0.0/22"
 }
 
@@ -119,7 +119,7 @@ module "security_group" {
 module "key_pairs" {
   source = "./providers/aws/key_pairs"
   key_name = [
-    "key-balsamo-server"
+    "key-server"
   ]
 }
 
@@ -128,9 +128,9 @@ module "ec2" {
   source = "./providers/aws/servers"
   ec2-web-servers = [
     {
-      name          = "balsamo-server"
+      name          = "-server"
       instance_type = "t2.micro"
-      key_name      = "key-balsamo-server"
+      key_name      = "key-server"
       volume_size   = 8
       volume_type   = "gp2"
     }

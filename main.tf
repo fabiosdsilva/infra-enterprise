@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "infraestrutura-terraform-balsamo" ## Colocar o nome do bucket
+    bucket = "infra-enterprise" ## Colocar o nome do bucket
     key     = "terraform.state"
     region  = "us-east-1"
     encrypt = true
